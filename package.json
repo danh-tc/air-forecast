@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "echo \"No tests defined\" && exit 0"
   },
   "dependencies": {
     "@maptiler/sdk": "^3.8.0",
