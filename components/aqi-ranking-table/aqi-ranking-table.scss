@@ -1,0 +1,52 @@
+.aqi-table-wrapper {
+  background: #f3f9ff;
+  padding: 16px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+
+  .aqi-table-title {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .aqi-table-subtitle {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .aqi-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+
+    th {
+      background: #bcdcff;
+      font-weight: 600;
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+
+    td {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    td:nth-child(2),
+    td:nth-child(4) {
+      font-weight: 600;
+      color: #000;
+      min-width: 60px;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  }
+}

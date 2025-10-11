@@ -1,0 +1,22 @@
+.aqi-map {
+  width: 100%;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  .maplibregl-popup-content {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .maplibregl-ctrl-top-right {
+    margin: 10px;
+  }
+}
