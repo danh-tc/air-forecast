@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import "./aqi-map.scss";
 
 export default function AqiMap({
-  geojsonUrl = "/data/hochiminh.json",
+  geojsonUrl = "data/hochiminh.json",
   aqiData = {},
 }) {
   const mapContainer = useRef(null);
