@@ -1,3 +1,4 @@
+import APIButton from "../../components/api-button/ApiButton";
 import AqiLegend from "../../components/aqi-legend/AqiLegend";
 import { aqiLevels } from "../../components/aqi-legend/mock-data";
 import AqiRankingTable from "../../components/aqi-ranking-table/AqiRankingTable";
@@ -9,11 +10,12 @@ import {
 import { mapMapDataToTableData } from "../../libs/utils";
 
 const mockAqiData = generateMockAqi(hcmDistrictInfo);
-const { dataLeft, dataRight, colorScale } = mapMapDataToTableData(mockAqiData);;
+const { dataLeft, dataRight, colorScale } = mapMapDataToTableData(mockAqiData);
 
 export default function Home() {
   return (
     <div className="rethink-air-forecast">
+      <APIButton/>
       <AqiMap geojsonUrl="/data/hochiminh.json" aqiData={mockAqiData} />
       <AqiRankingTable
         title="Xếp hạng chất lượng không khí - 24 Quận/Huyện TP.HCM"

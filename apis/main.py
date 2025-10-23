@@ -1,32 +1,46 @@
-from fastapi import FastAPI, HTTPException
-from schemas import AQIRawInput, AQIBatchResponse
-from utils import predict_from_raw_list
-from typing import List
+from fastapi import FastAPI, Body
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict, Any
+from model_service.feature_engineering import map_to_model_input
+from model_service.predictor import load_model, predict
 
-app = FastAPI(title="AQI Prediction API")
+app = FastAPI(title="AQI Prediction Service")
 
-@app.post("/predict", response_model=AQIBatchResponse)
-def predict_endpoint(input_data: List[AQIRawInput]):
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+model = load_model()
+
+
+@app.post("/predict_aqi")
+def predict_aqi(payload: Dict[str, Any] = Body(...)):
     """
-    Accepts a list of AQI records:
-    [
-        {
-            "dt": "2024-09-27 14:00:00",
-            "aqi": 4,
-            "co": 1094.82,
-            "no": 6.37,
-            "no2": 52.78,
-            "o3": 118.73,
-            "so2": 57.7,
-            "pm2_5": 62.9,
-            "pm10": 71.11,
-            "nh3": 8.61
-        },
-        {...}
-    ]
+    Receives: { "data": [ {dt, co, no, ...}, ... ] }
+    → Enrich features
+    → Run XGBoost model
+    → Return prediction + lat/lon/dt
     """
+    data = payload.get("data", [])
+    if not data:
+        return {"error": "Missing 'data' array"}
+
     try:
-        result = predict_from_raw_list([item.dict() for item in input_data])
-        return {"results": result}
+        features = map_to_model_input(data)
+        y_pred, feature_count = predict(model, features)
+
+        last_row = data[-1]
+        return {
+            "prediction": y_pred,
+            "unit": "AQI",
+            "feature_count": feature_count,
+            "lat": last_row.get("lat"),
+            "lon": last_row.get("lon"),
+            "dt": last_row.get("dt"),
+        }
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return {"error": f"Prediction failed: {str(e)}"}

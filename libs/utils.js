@@ -46,3 +46,26 @@ export function mapMapDataToTableData(districtInfo, aqiOverride = {}) {
     colorScale,
   };
 }
+
+export function buildAQIData(current = new Date(), lat, lon) {
+  const data = [];
+  for (let i = 24; i >= 0; i--) {
+    const dt = new Date(current);
+    dt.setHours(current.getHours() - i);
+
+    data.push({
+      dt: dt.toISOString().slice(0, 19).replace("T", " "),
+      co: 300 + Math.random() * 50,
+      no: 0.1 + Math.random() * 0.05,
+      no2: 5 + Math.random() * 1,
+      o3: 45 + Math.random() * 5,
+      so2: 1 + Math.random() * 0.5,
+      pm2_5: 12 + Math.random() * 2,
+      pm10: 16 + Math.random() * 3,
+      nh3: 1.5 + Math.random() * 0.3,
+      lat: lat,
+      lon: lon,
+    });
+  }
+  return data;
+}
