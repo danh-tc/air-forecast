@@ -1,0 +1,9 @@
+.two-cols-container {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+
+  .map-wrapper {
+    width: 50%;
+  }
+}

@@ -28,7 +28,6 @@ def predict_aqi(payload: Dict[str, Any] = Body(...)):
     data = payload.get("data", [])
     if not data:
         return {"error": "Missing 'data' array"}
-
     try:
         features = map_to_model_input(data)
         y_pred, feature_count = predict(model, features)

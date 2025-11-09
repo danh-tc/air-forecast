@@ -1,31 +1,34 @@
-import APIButton from "../../components/api-button/ApiButton";
+import AqiHeader from "../../components/aqi-header/AqiHeader";
 import AqiLegend from "../../components/aqi-legend/AqiLegend";
 import { aqiLevels } from "../../components/aqi-legend/mock-data";
 import AqiRankingTable from "../../components/aqi-ranking-table/AqiRankingTable";
 import AqiMap from "../../components/map/AqiMap";
-import {
-  hcmDistrictInfo,
-  generateMockAqi,
-} from "../../components/map/mock-data";
-import { mapMapDataToTableData } from "../../libs/utils";
-
-const mockAqiData = generateMockAqi(hcmDistrictInfo);
-const { dataLeft, dataRight, colorScale } = mapMapDataToTableData(mockAqiData);
+import PredictAqiMap from "../../components/map/PredictAqiMap";
 
 export default function Home() {
   return (
     <div className="rethink-air-forecast">
-      <APIButton/>
-      <AqiMap geojsonUrl="/data/hochiminh.json" aqiData={mockAqiData} />
-      <AqiRankingTable
-        title="Xếp hạng chất lượng không khí - 24 Quận/Huyện TP.HCM"
-        subtitle="Dữ liệu minh họa (tự sinh ngẫu nhiên theo dải màu AQI)"
-        leftHeader="Quận/Huyện"
-        rightHeader="Quận/Huyện"
-        dataLeft={dataLeft}
-        dataRight={dataRight}
-        colorScale={colorScale}
-      />
+      <AqiHeader />
+      <div className="two-cols-container">
+        <AqiMap mapTitle="Chất lượng không khí TP.HCM hiện tại" />
+        <PredictAqiMap mapTitle="Dự đoán chất lượng không khí TP.HCM trong 1 giờ tới" />
+      </div>
+      <div className="two-cols-container">
+        <AqiRankingTable
+          title="Chất lượng không khí tại TP.HCM"
+          subtitle="Dữ liệu từ OpenWeatherMap"
+          leftHeader="Quận/Huyện"
+          rightHeader="Quận/Huyện"
+          mode="current"
+        />
+        <AqiRankingTable
+          title="Dự đoán chất lượng không khí TP.HCM"
+          subtitle="Dữ liệu dự đoán từ mô hình ML"
+          leftHeader="Quận/Huyện"
+          rightHeader="Quận/Huyện"
+          mode="predict"
+        />
+      </div>
       <AqiLegend levels={aqiLevels} />
     </div>
   );

@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@maptiler/sdk": "^3.8.0",
+    "@turf/turf": "^7.2.0",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "sass": "^1.93.2"
+    "sass": "^1.93.2",
+    "turf": "^3.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

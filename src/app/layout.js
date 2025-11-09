@@ -1,5 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./layout.scss";
+import { AqiProvider } from "../../context/AqiContext";
+import { PredictAqiProvider } from "../../context/PredictAqiContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +23,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <AqiProvider>
+          <PredictAqiProvider>{children}</PredictAqiProvider>
+        </AqiProvider>
       </body>
     </html>
   );

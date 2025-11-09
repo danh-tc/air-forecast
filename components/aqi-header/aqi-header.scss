@@ -1,0 +1,37 @@
+.aqi-header {
+  text-align: center;
+  padding: 32px 16px 28px;
+  margin-bottom: 28px;
+
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #4a90e2 100%);
+
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+
+  color: #ffffff;
+}
+
+.aqi-header-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.aqi-header-sub {
+  font-size: 22px;
+  font-weight: 500;
+  opacity: 0.9;
+  margin: 8px 0 12px;
+}
+
+.aqi-header-topic {
+  font-size: 19px;
+  font-weight: 400;
+  opacity: 0.85;
+
+  strong {
+    font-weight: 600;
+    color: #fff;
+    opacity: 1;
+  }
+}

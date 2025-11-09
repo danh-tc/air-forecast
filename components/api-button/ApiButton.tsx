@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import "./api-button.scss";
-import { buildAQIData } from "../../libs/utils";
+import { buildAQIData, getUnixRange } from "../../libs/utils";
 
 export default function APIButton() {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>(null);
 
   const handleCallAPI = async () => {
+    console.log(getUnixRange());
     setLoading(true);
     setResponse(null);
 
@@ -16,14 +17,14 @@ export default function APIButton() {
       new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
       12,
       34
-    ); // returns 25 objects
+    );
     console.log("Payload:", data);
 
     try {
       const res = await fetch("http://localhost:8000/predict_aqi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data }), // wrapper for backend
+        body: JSON.stringify({ data }),
       });
 
       const json = await res.json();

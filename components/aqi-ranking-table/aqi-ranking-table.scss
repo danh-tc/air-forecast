@@ -5,8 +5,13 @@
   width: 100%;
   max-width: 800px;
   margin: auto;
-  font-family: "Inter", sans-serif;
   text-align: center;
+  width: 50%;
+
+  tr,
+  td {
+    min-height: 29px;
+  }
 
   .aqi-table-title {
     font-weight: 700;

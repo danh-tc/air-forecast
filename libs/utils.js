@@ -1,50 +1,38 @@
-/**
- * AQI → color mapping
- */
 export const colorScale = [
-  { min: 0, max: 50, color: "#00E400" },
-  { min: 51, max: 100, color: "#FFFF00" },
-  { min: 101, max: 150, color: "#FF7E00" },
-  { min: 151, max: 200, color: "#FF0000" },
-  { min: 201, max: 300, color: "#8F3F97" },
-  { min: 301, max: 500, color: "#7E0023" },
+  { level: 1, label: "Good", color: "#00E400" },
+  { level: 2, label: "Fair", color: "#FFFF00" },
+  { level: 3, label: "Moderate", color: "#FF7E00" },
+  { level: 4, label: "Poor", color: "#FF0000" },
+  { level: 5, label: "Very Poor", color: "#8F3F97" },
 ];
 
-/**
- * Helper to find the color for a given AQI
- */
-function getAqiColor(aqi) {
-  const range = colorScale.find((r) => aqi >= r.min && aqi <= r.max);
-  return range ? range.color : "#999";
+export function getAqiColor(aqi) {
+  const entry = colorScale.find((r) => r.level === aqi);
+  return entry ? entry.color : "#7E0023";
 }
 
-/**
- * Converts districtInfo object → array form
- * Optionally accepts aqiOverride to replace aqi values by name or code
- */
-export function mapMapDataToTableData(districtInfo, aqiOverride = {}) {
-  const allData = Object.values(districtInfo).map((d) => {
-    const newAqi =
-      aqiOverride[d.shortName] ?? aqiOverride[d.name] ?? d.aqi ?? 0;
+export function getAqiLabel(aqi) {
+  const entry = colorScale.find((r) => r.level === aqi);
+  return entry ? entry.label : "Hazardous";
+}
 
-    return {
-      name: d.shortName,
-      aqi: newAqi,
-      color: getAqiColor(newAqi),
-    };
-  });
+export function mapMapDataToTableData(aqiGeojson) {
+  if (!aqiGeojson?.features)
+    return { dataLeft: [], dataRight: [], colorScale: [] };
 
-  allData.sort((a, b) => -b.aqi + a.aqi);
+  const items = aqiGeojson.features
+    .map((f) => ({
+      name: f.properties.name,
+      aqi: f.properties.aqi ?? 0,
+      color: getAqiColor(f.properties.aqi),
+    }))
+    .sort((a, b) => -b.aqi + a.aqi);
 
-  const mid = Math.ceil(allData.length / 2);
-  const dataLeft = allData.slice(0, mid);
-  const dataRight = allData.slice(mid);
+  const midpoint = Math.ceil(items.length / 2);
+  const dataLeft = items.slice(0, midpoint);
+  const dataRight = items.slice(midpoint);
 
-  return {
-    dataLeft,
-    dataRight,
-    colorScale,
-  };
+  return { dataLeft, dataRight, colorScale };
 }
 
 export function buildAQIData(current = new Date(), lat, lon) {
@@ -68,4 +56,37 @@ export function buildAQIData(current = new Date(), lat, lon) {
     });
   }
   return data;
+}
+
+export function convertToUTC7(dt) {
+  const date = new Date(dt * 1000);
+  const utc7 = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  const year = utc7.getFullYear();
+  const month = String(utc7.getMonth() + 1).padStart(2, "0");
+  const day = String(utc7.getDate()).padStart(2, "0");
+  const hours = String(utc7.getHours()).padStart(2, "0");
+  const minutes = String(utc7.getMinutes()).padStart(2, "0");
+  const seconds = String(utc7.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function getUnixRange() {
+  const now = new Date();
+
+  const endUTC = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    now.getUTCHours(),
+    0,
+    0,
+    0
+  );
+
+  const startUTC = endUTC - 24 * 60 * 60 * 1000;
+
+  return {
+    start: Math.floor(startUTC / 1000),
+    end: Math.floor(endUTC / 1000),
+  };
 }

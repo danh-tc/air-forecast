@@ -1,66 +1,105 @@
 "use client";
+import { useMemo } from "react";
+import { useAqi } from "../../context/AqiContext";
+import { usePredictAqi } from "../../context/PredictAqiContext";
+import { getAqiColor, mapMapDataToTableData } from "../../libs/utils";
+
 import "./aqi-ranking-table.scss";
 
 export default function AqiRankingTable({
-  title = "Xếp hạng chất lượng không khí",
-  subtitle = "Chủ Nhật, ngày 12/10/2025",
-  leftHeader = "Quận huyện",
-  rightHeader = "Quận huyện",
-  dataLeft = [],
-  dataRight = [],
-  colorScale = [
-    { min: 0, max: 50, color: "#00E400" },
-    { min: 51, max: 100, color: "#FFFF00" },
-    { min: 101, max: 150, color: "#FF7E00" },
-    { min: 151, max: 200, color: "#FF0000" },
-    { min: 201, max: 300, color: "#8F3F97" },
-    { min: 301, max: 500, color: "#7E0023" },
-  ],
+  mode = "current",
+  title = "Xếp hạng chất lượng không khí - 24 Quận/Huyện TP.HCM",
+  subtitle = "Nguồn dữ liệu: OpenWeatherMap",
 }) {
-  const getAqiColor = (value) => {
-    const range = colorScale.find((r) => value >= r.min && value <= r.max);
-    return range ? range.color : "#ccc";
+  const { aqiData, loading: loadingCurrent, error: errorCurrent } = useAqi();
+  const {
+    predictedData,
+    loading: loadingPredict,
+    error: errorPredict,
+  } = usePredictAqi();
+  const isPredict = mode === "predict";
+  const dataSource = isPredict ? predictedData : aqiData;
+  const loading = isPredict ? loadingPredict : loadingCurrent;
+  const error = isPredict ? errorPredict : errorCurrent;
+  const { dataLeft, dataRight } = useMemo(() => {
+    if (!dataSource) return { dataLeft: [], dataRight: [] };
+    return mapMapDataToTableData(dataSource);
+  }, [dataSource]);
+
+  const getTextColor = (bgColor) => {
+    if (!bgColor) return "#000";
+    const c = bgColor.substring(1);
+    const rgb = parseInt(c, 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = rgb & 0xff;
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    return lum > 160 ? "#000" : "#fff";
   };
 
+  const rowCount = 12;
   return (
     <div className="aqi-table-wrapper">
-      <div className="aqi-table-title">{title}</div>
-      <div className="aqi-table-subtitle">{subtitle}</div>
+      <div className="aqi-table-header">
+        <div className="aqi-table-title">{title}</div>
+        <div className="aqi-table-subtitle">{subtitle}</div>
+      </div>
+
+      {error && <div className="aqi-error-banner">{error}</div>}
 
       <table className="aqi-table">
         <thead>
           <tr>
-            <th>{leftHeader}</th>
+            <th>Quận/Huyện</th>
             <th>AQI</th>
-            <th>{rightHeader}</th>
+            <th>Quận/Huyện</th>
             <th>AQI</th>
           </tr>
         </thead>
+
         <tbody>
-          {Array.from({
-            length: Math.max(dataLeft.length, dataRight.length),
-          }).map((_, i) => (
-            <tr key={i}>
-              <td>{dataLeft[i]?.name || ""}</td>
-              <td
-                style={{
-                  backgroundColor: getAqiColor(dataLeft[i]?.aqi ?? -1),
-                }}
-              >
-                {dataLeft[i]?.aqi ?? ""}
-              </td>
-              <td>{dataRight[i]?.name || ""}</td>
-              <td
-                style={{
-                  backgroundColor: getAqiColor(dataRight[i]?.aqi ?? -1),
-                }}
-              >
-                {dataRight[i]?.aqi ?? ""}
-              </td>
-            </tr>
-          ))}
+          {Array.from({ length: rowCount }).map((_, i) => {
+            const left = dataLeft[i];
+            const right = dataRight[i];
+
+            const leftBg = getAqiColor(left?.aqi ?? -1);
+            const rightBg = getAqiColor(right?.aqi ?? -1);
+
+            const isLoading = loading && !(left || right);
+
+            return (
+              <tr key={i} className={isLoading ? "loading-row" : ""}>
+                <td>{left?.name || (loading ? "…" : "")}</td>
+                <td
+                  style={{
+                    backgroundColor: left ? leftBg : "#eee",
+                    color: left ? getTextColor(leftBg) : "#333",
+                  }}
+                >
+                  {left?.aqi ?? (loading ? "…" : "")}
+                </td>
+
+                <td>{right?.name || (loading ? "…" : "")}</td>
+                <td
+                  style={{
+                    backgroundColor: right ? rightBg : "#eee",
+                    color: right ? getTextColor(rightBg) : "#333",
+                  }}
+                >
+                  {right?.aqi ?? (loading ? "…" : "")}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+
+      {loading && (
+        <div className="aqi-loading-inline">
+          <div className="spinner-small" />
+          <span>Đang tải dữ liệu...</span>
+        </div>
+      )}
     </div>
   );
 }

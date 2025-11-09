@@ -1,39 +1,33 @@
 const aqiLevels = [
   {
-    range: "0 - 50",
-    label: "Tốt",
+    range: "1",
+    label: "Good",
     description: "Không ảnh hưởng tới sức khỏe.",
     color: "#00e400",
   },
   {
-    range: "51 - 100",
-    label: "Trung bình",
+    range: "2",
+    label: "Fair",
     description: "Nhạy cảm có thể bị ảnh hưởng.",
     color: "#ffff00",
   },
   {
-    range: "101 - 150",
-    label: "Kém",
+    range: "3",
+    label: "Moderate",
     description: "Người nhạy cảm nên hạn chế hoạt động ngoài trời.",
     color: "#ff7e00",
   },
   {
-    range: "151 - 200",
-    label: "Xấu",
+    range: "4",
+    label: "Poor",
     description: "Gây ảnh hưởng xấu đến sức khỏe.",
     color: "#ff0000",
   },
   {
-    range: "201 - 300",
-    label: "Rất xấu",
+    range: "5",
+    label: "Very Poor",
     description: "Mọi người nên ở trong nhà.",
     color: "#8f3f97",
-  },
-  {
-    range: "301 - 500",
-    label: "Nguy hại",
-    description: "Không nên ra ngoài.",
-    color: "#7e0023",
   },
 ];
 
