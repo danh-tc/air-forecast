@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 from model_service.feature_engineering import map_to_model_input
 from model_service.predictor import load_model, predict
+from datetime import datetime, timedelta, timezone
 
 app = FastAPI(title="AQI Prediction Service")
 
@@ -35,11 +36,11 @@ def predict_aqi(payload: Dict[str, Any] = Body(...)):
         last_row = data[-1]
         return {
             "prediction": y_pred,
-            "unit": "AQI",
+            "model_name": "aqi_model",
             "feature_count": feature_count,
             "lat": last_row.get("lat"),
             "lon": last_row.get("lon"),
-            "dt": last_row.get("dt"),
+            "dt": datetime.now(timezone(timedelta(hours=7))).strftime("%d/%m/%Y %H:%M:%S"),
         }
     except Exception as e:
         return {"error": f"Prediction failed: {str(e)}"}

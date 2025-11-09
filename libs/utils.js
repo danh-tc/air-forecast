@@ -1,9 +1,9 @@
 export const colorScale = [
   { level: 1, label: "Good", color: "#00E400" },
-  { level: 2, label: "Fair", color: "#FFFF00" },
-  { level: 3, label: "Moderate", color: "#FF7E00" },
-  { level: 4, label: "Poor", color: "#FF0000" },
-  { level: 5, label: "Very Poor", color: "#8F3F97" },
+  { level: 2, label: "Moderate", color: "#FFFF00" },
+  { level: 3, label: "Unhealthy", color: "#FF7E00" },
+  { level: 4, label: "Very Unhealthy", color: "#FF0000" },
+  { level: 5, label: "Hazardous", color: "#8F3F97" },
 ];
 
 export function getAqiColor(aqi) {
