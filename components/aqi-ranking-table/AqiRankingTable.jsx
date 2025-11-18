@@ -50,10 +50,10 @@ export default function AqiRankingTable({
       <table className="aqi-table">
         <thead>
           <tr>
-            <th>Quận/Huyện</th>
-            <th>AQI</th>
-            <th>Quận/Huyện</th>
-            <th>AQI</th>
+            <th>Districts</th>
+            <th>AQI levels</th>
+            <th>Districts</th>
+            <th>AQI levels</th>
           </tr>
         </thead>
 

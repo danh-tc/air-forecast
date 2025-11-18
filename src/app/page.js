@@ -10,22 +10,22 @@ export default function Home() {
     <div className="rethink-air-forecast">
       <AqiHeader />
       <div className="two-cols-container">
-        <AqiMap mapTitle="Chất lượng không khí TP.HCM hiện tại" />
-        <PredictAqiMap mapTitle="Dự đoán chất lượng không khí TP.HCM trong 1 giờ tới" />
+        <AqiMap mapTitle="Current AQI levels across all districts in Ho Chi Minh City" />
+        <PredictAqiMap mapTitle="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City" />
       </div>
       <div className="two-cols-container">
         <AqiRankingTable
-          title="Chất lượng không khí tại TP.HCM"
-          subtitle="Dữ liệu từ OpenWeatherMap"
-          leftHeader="Quận/Huyện"
-          rightHeader="Quận/Huyện"
+          title="Current AQI levels across all districts in Ho Chi Minh City"
+          subtitle="Data from OpenWeatherMap Apis"
+          leftHeader="District"
+          rightHeader="District"
           mode="current"
         />
         <AqiRankingTable
-          title="Dự đoán chất lượng không khí TP.HCM"
-          subtitle="Dữ liệu dự đoán từ mô hình ML"
-          leftHeader="Quận/Huyện"
-          rightHeader="Quận/Huyện"
+          title="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
+          subtitle="Data from the Next-Hour AQI Prediction Model"
+          leftHeader="District"
+          rightHeader="District"
           mode="predict"
         />
       </div>

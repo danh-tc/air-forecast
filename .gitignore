@@ -44,3 +44,4 @@ apis/__pycache__/
 apis/**/*.pyc
 apis/**/*.pyo
 apis/**/*.pyd
+*/.idea/*
