@@ -4,6 +4,7 @@ import "./aqi-map.scss";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { useAqi } from "../../context/AqiContext";
+import { getCurrentDateTimeUTC7 } from "../aqi-ranking-table/AqiRankingTable";
 
 export default function AqiMap({
   mapTitle = "Bản đồ chất lượng không khí TP.HCM",
@@ -70,7 +71,7 @@ export default function AqiMap({
   return (
     <div className="map-wrapper">
       <h3 className="map-title">{mapTitle}</h3>
-
+      <p className="time">{getCurrentDateTimeUTC7().toString()}</p>
       <div className="aqi-map">
         <div ref={mapContainer} className="map-inner" />
 

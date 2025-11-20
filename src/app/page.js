@@ -11,8 +11,12 @@ export default function Home() {
       <AqiHeader />
       <div className="two-cols-container">
         <AqiMap mapTitle="Current AQI levels across all districts in Ho Chi Minh City" />
-        <PredictAqiMap mapTitle="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City" />
+        <PredictAqiMap
+          modelKey="next_hour"
+          mapTitle="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
+        />
       </div>
+      <div className="two-cols-container"></div>
       <div className="two-cols-container">
         <AqiRankingTable
           title="Current AQI levels across all districts in Ho Chi Minh City"
@@ -27,6 +31,7 @@ export default function Home() {
           leftHeader="District"
           rightHeader="District"
           mode="predict"
+          modelKey="next_hour"
         />
       </div>
       <AqiLegend levels={aqiLevels} />

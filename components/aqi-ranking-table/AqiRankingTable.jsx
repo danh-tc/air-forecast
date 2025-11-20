@@ -1,4 +1,5 @@
 "use client";
+
 import { useMemo } from "react";
 import { useAqi } from "../../context/AqiContext";
 import { usePredictAqi } from "../../context/PredictAqiContext";
@@ -8,19 +9,26 @@ import "./aqi-ranking-table.scss";
 
 export default function AqiRankingTable({
   mode = "current",
+  modelKey = "next_hour",
   title = "Xếp hạng chất lượng không khí - 24 Quận/Huyện TP.HCM",
   subtitle = "Nguồn dữ liệu: OpenWeatherMap",
 }) {
   const { aqiData, loading: loadingCurrent, error: errorCurrent } = useAqi();
+
   const {
-    predictedData,
+    predictions,
     loading: loadingPredict,
     error: errorPredict,
+    baseLoading,
+    baseError,
   } = usePredictAqi();
+
   const isPredict = mode === "predict";
-  const dataSource = isPredict ? predictedData : aqiData;
-  const loading = isPredict ? loadingPredict : loadingCurrent;
-  const error = isPredict ? errorPredict : errorCurrent;
+  const dataSource = isPredict ? predictions?.[modelKey] : aqiData;
+
+  const loading = isPredict ? loadingPredict || baseLoading : loadingCurrent;
+  const error = isPredict ? errorPredict || baseError : errorCurrent;
+
   const { dataLeft, dataRight } = useMemo(() => {
     if (!dataSource) return { dataLeft: [], dataRight: [] };
     return mapMapDataToTableData(dataSource);
@@ -38,11 +46,22 @@ export default function AqiRankingTable({
   };
 
   const rowCount = 12;
+
   return (
     <div className="aqi-table-wrapper">
       <div className="aqi-table-header">
         <div className="aqi-table-title">{title}</div>
         <div className="aqi-table-subtitle">{subtitle}</div>
+        {!isPredict && (
+          <div className="aqi-table-subtitle time">
+            {getCurrentDateTimeUTC7().toString()}
+          </div>
+        )}
+        {isPredict && (
+          <div className="aqi-table-subtitle time">
+            {getNext4HoursUTC7().toString()}
+          </div>
+        )}
       </div>
 
       {error && <div className="aqi-error-banner">{error}</div>}
@@ -69,6 +88,7 @@ export default function AqiRankingTable({
 
             return (
               <tr key={i} className={isLoading ? "loading-row" : ""}>
+                {/* LEFT COLUMN */}
                 <td>{left?.name || (loading ? "…" : "")}</td>
                 <td
                   style={{
@@ -79,6 +99,7 @@ export default function AqiRankingTable({
                   {left?.aqi ?? (loading ? "…" : "")}
                 </td>
 
+                {/* RIGHT COLUMN */}
                 <td>{right?.name || (loading ? "…" : "")}</td>
                 <td
                   style={{
@@ -102,4 +123,23 @@ export default function AqiRankingTable({
       )}
     </div>
   );
+}
+
+export function getCurrentDateTimeUTC7() {
+  return new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" })
+  );
+}
+
+export function getNext4HoursUTC7() {
+  const now = getCurrentDateTimeUTC7();
+  const result = new Date(now);
+  let hour = now.getHours();
+  let rounded = Math.ceil((hour + 0.0001) / 4) * 4;
+  if (rounded >= 24) {
+    rounded = 0;
+    result.setDate(result.getDate() + 1);
+  }
+  result.setHours(rounded, 0, 0, 0);
+  return result;
 }

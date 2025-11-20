@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Path
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 from model_service.feature_engineering import map_to_model_input
@@ -15,32 +15,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = load_model()
-
-
-@app.post("/predict_aqi")
-def predict_aqi(payload: Dict[str, Any] = Body(...)):
+@app.post("/predict_aqi/{model_name}")
+def predict_aqi_by_model(
+    model_name: str = Path(..., description="Model key, e.g. 'next_hour', 'next_4hours'"),
+    payload: Dict[str, Any] = Body(...)
+):
     """
+    e.g.
+    POST /predict_aqi/next_hour
+    POST /predict_aqi/next_4hours
+
     Receives: { "data": [ {dt, co, no, ...}, ... ] }
     → Enrich features
-    → Run XGBoost model
-    → Return prediction + lat/lon/dt
+    → Run selected model
+    → Return prediction + meta
     """
     data = payload.get("data", [])
     if not data:
         return {"error": "Missing 'data' array"}
+
     try:
+        model = load_model(model_name)
         features = map_to_model_input(data)
         y_pred, feature_count = predict(model, features)
 
         last_row = data[-1]
         return {
             "prediction": y_pred,
-            "model_name": "aqi_model",
+            "model_name": model_name,
             "feature_count": feature_count,
             "lat": last_row.get("lat"),
             "lon": last_row.get("lon"),
             "dt": datetime.now(timezone(timedelta(hours=7))).strftime("%d/%m/%Y %H:%M:%S"),
         }
     except Exception as e:
-        return {"error": f"Prediction failed: {str(e)}"}
+        return {"error": f"{model_name} → Prediction failed: {str(e)}"}

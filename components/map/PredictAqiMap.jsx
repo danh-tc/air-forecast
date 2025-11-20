@@ -1,20 +1,27 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./aqi-map.scss";
 import { usePredictAqi } from "../../context/PredictAqiContext";
+import { getNext4HoursUTC7 } from "../aqi-ranking-table/AqiRankingTable";
 
-export default function PredictAqiMap({ mapTitle = "Bản đồ AQI Dự Đoán" }) {
+export default function PredictAqiMap({
+  mapTitle = "Bản đồ AQI Dự đoán",
+  modelKey = "next_hour",
+}) {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
 
-  const { predictedData, loading, error, baseLoading, baseError } =
+  const { predictions, loading, error, baseLoading, baseError } =
     usePredictAqi();
 
+  const mapData = predictions?.[modelKey];
+
   useEffect(() => {
-    if (!predictedData || loading || error || baseError) return;
-    if (mapRef.current) return;
+    if (!mapContainer.current) return;
+    if (!mapData || loading || error || baseError) return;
 
     maptilersdk.config.apiKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
@@ -24,11 +31,13 @@ export default function PredictAqiMap({ mapTitle = "Bản đồ AQI Dự Đoán"
       center: [106.660172, 10.762622],
       zoom: 8.5,
     });
+
     mapRef.current = map;
+
     map.on("load", () => {
       map.addSource("predicted-borders", {
         type: "geojson",
-        data: predictedData,
+        data: mapData,
       });
 
       map.addLayer({
@@ -61,7 +70,7 @@ export default function PredictAqiMap({ mapTitle = "Bản đồ AQI Dự Đoán"
           .setHTML(
             `<div>
               <b>${p.name}</b><br/>
-              AQI Dự đoán: ${p.predicted_aqi}<br/>
+              AQI Dự đoán (${modelKey}): ${p.predicted_aqi}<br/>
               <small>${p.predicted_desc}</small>
             </div>`
           )
@@ -71,13 +80,18 @@ export default function PredictAqiMap({ mapTitle = "Bản đồ AQI Dự Đoán"
       map.on("mouseleave", "predicted-fill", () => popup.remove());
     });
 
-    return () => map.remove();
-  }, [predictedData, loading, error, baseError]);
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [mapData, loading, error, baseError, modelKey]);
 
   return (
     <div className="map-wrapper">
       <h3 className="map-title">{mapTitle}</h3>
-
+      <p className="time">{getNext4HoursUTC7().toString()}</p>
       <div className="aqi-map">
         <div ref={mapContainer} className="map-inner" />
 
@@ -87,7 +101,7 @@ export default function PredictAqiMap({ mapTitle = "Bản đồ AQI Dự Đoán"
           </div>
         )}
 
-        {(loading || baseLoading) && (
+        {(loading || baseLoading || !mapData) && (
           <div className="map-overlay">
             <div className="spinner"></div>
             <p>Đang tải bản đồ AQI dự đoán...</p>
