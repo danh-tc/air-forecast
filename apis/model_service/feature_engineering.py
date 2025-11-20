@@ -6,8 +6,8 @@ from typing import List, Dict, Any
 def create_advanced_features(df: pd.DataFrame, pollutants: List[str]) -> pd.DataFrame:
     """Generate lag and rolling mean/std features for each pollutant."""
     features_list = []
-    lags = [1, 2, 4, 8, 12, 24]
-    windows = [3, 6, 9, 12, 24]
+    lags = [1, 2, 3, 4, 6, 8]
+    windows = [4, 6, 8]
 
     for col in pollutants:
         for lag in lags:
@@ -23,6 +23,22 @@ def create_advanced_features(df: pd.DataFrame, pollutants: List[str]) -> pd.Data
             roll_std_series = df[col].rolling(window=window).std()
             roll_std_series.name = f"{col}_roll_std_{window}h"
             features_list.append(roll_std_series)
+
+        diff_series = df[col].diff(1)
+        diff_series.name = f"{col}_diff_over_1hour"
+        features_list.append(diff_series)
+
+    ratio_series = df["pm2_5"] / df["pm10"]
+    ratio_series.name = "pm_ratio"
+    features_list.append(ratio_series)
+
+    ratio_series = df["no2"] / df["no"]
+    ratio_series.name = "nitro_oxide_ratio"
+    features_list.append(ratio_series)
+
+    ratio_series = df["co"] * df["no"]
+    ratio_series.name = "co_no_product"
+    features_list.append(ratio_series)
 
     df_feat = pd.concat([df] + features_list, axis=1)
     return df_feat
@@ -48,9 +64,11 @@ def map_to_model_input(data: List[Dict[str, Any]]) -> pd.Series:
     df["dayofweek_sin"] = np.sin(2 * np.pi * df["dayofweek"] / 7)
     df["dayofweek_cos"] = np.cos(2 * np.pi * df["dayofweek"] / 7)
 
-    # Pollutants list
+    df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
+    df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
+
     pollutants = ["co", "no2", "pm2_5", "pm10", "o3", "so2", "nh3", "no"]
+
     df_feat = create_advanced_features(df, pollutants)
 
-    # Return last complete row
     return df_feat.iloc[-1].dropna()

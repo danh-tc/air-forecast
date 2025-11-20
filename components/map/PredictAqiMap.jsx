@@ -5,7 +5,7 @@ import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./aqi-map.scss";
 import { usePredictAqi } from "../../context/PredictAqiContext";
-import { getNext4HoursUTC7 } from "../aqi-ranking-table/AqiRankingTable";
+import { getNextXHoursUTC7 } from "../aqi-ranking-table/AqiRankingTable";
 
 export default function PredictAqiMap({
   mapTitle = "Bản đồ AQI Dự đoán",
@@ -91,7 +91,9 @@ export default function PredictAqiMap({
   return (
     <div className="map-wrapper">
       <h3 className="map-title">{mapTitle}</h3>
-      <p className="time">{getNext4HoursUTC7().toString()}</p>
+      <p className="time">
+        {getNextXHoursUTC7(modelKey === "next_hour" ? 1 : 4).toString()}
+      </p>
       <div className="aqi-map">
         <div ref={mapContainer} className="map-inner" />
 

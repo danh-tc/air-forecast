@@ -9,15 +9,8 @@ export default function Home() {
   return (
     <div className="rethink-air-forecast">
       <AqiHeader />
-      <div className="two-cols-container">
+      <div className="one-col-container">
         <AqiMap mapTitle="Current AQI levels across all districts in Ho Chi Minh City" />
-        <PredictAqiMap
-          modelKey="next_hour"
-          mapTitle="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
-        />
-      </div>
-      <div className="two-cols-container"></div>
-      <div className="two-cols-container">
         <AqiRankingTable
           title="Current AQI levels across all districts in Ho Chi Minh City"
           subtitle="Data from OpenWeatherMap Apis"
@@ -25,6 +18,19 @@ export default function Home() {
           rightHeader="District"
           mode="current"
         />
+      </div>
+      <div className="two-cols-container">
+        <PredictAqiMap
+          modelKey="next_hour"
+          mapTitle="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
+        />
+        <PredictAqiMap
+          modelKey="next_4_hours"
+          mapTitle="Next-4-Hours AQI Predictions for All Districts in Ho Chi Minh City"
+        />
+      </div>
+      <div className="two-cols-container"></div>
+      <div className="two-cols-container">
         <AqiRankingTable
           title="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
           subtitle="Data from the Next-Hour AQI Prediction Model"
@@ -32,6 +38,14 @@ export default function Home() {
           rightHeader="District"
           mode="predict"
           modelKey="next_hour"
+        />
+        <AqiRankingTable
+          title="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
+          subtitle="Data from the Next-Hour AQI Prediction Model"
+          leftHeader="District"
+          rightHeader="District"
+          mode="predict"
+          modelKey="next_4_hours"
         />
       </div>
       <AqiLegend levels={aqiLevels} />

@@ -59,7 +59,7 @@ export default function AqiRankingTable({
         )}
         {isPredict && (
           <div className="aqi-table-subtitle time">
-            {getNext4HoursUTC7().toString()}
+            {getNextXHoursUTC7(modelKey === "next_hour" ? 1 : 4).toString()}
           </div>
         )}
       </div>
@@ -131,15 +131,12 @@ export function getCurrentDateTimeUTC7() {
   );
 }
 
-export function getNext4HoursUTC7() {
-  const now = getCurrentDateTimeUTC7();
+export function getNextXHoursUTC7(hoursToAdd = 1) {
+  const now = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" })
+  );
   const result = new Date(now);
-  let hour = now.getHours();
-  let rounded = Math.ceil((hour + 0.0001) / 4) * 4;
-  if (rounded >= 24) {
-    rounded = 0;
-    result.setDate(result.getDate() + 1);
-  }
-  result.setHours(rounded, 0, 0, 0);
+  result.setHours(result.getHours() + hoursToAdd);
+  result.setMinutes(0, 0, 0);
   return result;
 }
