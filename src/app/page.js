@@ -41,7 +41,7 @@ export default function Home() {
         />
         <AqiRankingTable
           title="Next-Hour AQI Predictions for All Districts in Ho Chi Minh City"
-          subtitle="Data from the Next-Hour AQI Prediction Model"
+          subtitle="Data from the Next-4-Hours AQI Prediction Model"
           leftHeader="District"
           rightHeader="District"
           mode="predict"
