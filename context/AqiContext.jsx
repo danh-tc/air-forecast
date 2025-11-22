@@ -57,7 +57,7 @@ export function AqiProvider({ children }) {
           f.coord = match?.coord ?? null;
           f.list = match?.list ?? [];
           const latestAqiEntry = match?.list?.length ? match.list.at(-1) : null;
-          const aqi = latestAqiEntry?.main?.aqi ?? null;
+          const aqi = latestAqiEntry?.main?.aqi - 1 ?? null;
           f.properties.aqi = aqi;
           f.properties.color = getAqiColor(aqi);
           f.properties.desc = getAqiLabel(aqi);

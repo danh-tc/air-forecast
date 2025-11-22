@@ -90,7 +90,7 @@ export function PredictAqiProvider({ children }) {
 
       const match = entry?.result;
       const predicted = match?.prediction ?? null;
-      const aqiValue = predicted !== null ? predicted + 1 : null;
+      const aqiValue = predicted !== null ? predicted : null;
 
       return {
         ...f,
